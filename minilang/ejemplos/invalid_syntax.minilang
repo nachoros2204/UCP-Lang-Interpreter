@@ -1,0 +1,7 @@
+inicio
+
+entero x 10   # falta '='
+
+mostrar x +
+
+fin
