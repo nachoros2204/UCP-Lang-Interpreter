@@ -10,7 +10,7 @@ que el parser no puede encontrar por ser análisis de contexto:
 Lanza `SemanticError` al encontrar el primer error.
 """
 
-from .parser import Program, VarDecl, Assign, Show, BinOp, Number, VarRef, Compare
+from .parser import Program, VarDecl, Assign, Show, BinOp, Number, VarRef, Compare, IfStmt, WhileStmt
 from .tokens import TT_DIV
 
 
@@ -45,6 +45,18 @@ class SemanticAnalyzer:
 
         elif isinstance(stmt, Show):
             self._check_expr(stmt.expr, stmt.line)
+
+        elif isinstance(stmt, IfStmt):
+            self._check_expr(stmt.condition, stmt.line)
+            for s in stmt.then_body:
+                self._check_statement(s)
+            for s in stmt.else_body:
+                self._check_statement(s)
+
+        elif isinstance(stmt, WhileStmt):
+            self._check_expr(stmt.condition, stmt.line)
+            for s in stmt.body:
+                self._check_statement(s)
 
     def _check_expr(self, expr, line):
         if isinstance(expr, Number):

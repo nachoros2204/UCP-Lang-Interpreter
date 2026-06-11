@@ -16,10 +16,15 @@ TOKEN_SPECIFICATION = [
     ('NEWLINE', r"\n"),
     ('SKIP', r"[ \t]+"),
     ('COMMENT', r"#.*"),
-    ('START', r"\binicio\b"),
-    ('END', r"\bfin\b"),
-    ('INT', r"\bentero\b"),
-    ('SHOW', r"\bmostrar\b"),
+    ('START',    r"\binicio\b"),
+    ('ENDIF',    r"\bfin_si\b"),
+    ('ENDWHILE', r"\bfin_mientras\b"),
+    ('END',      r"\bfin\b"),
+    ('INT',      r"\bentero\b"),
+    ('SHOW',     r"\bmostrar\b"),
+    ('IF',       r"\bsi\b"),
+    ('ELSE',     r"\bsino\b"),
+    ('WHILE',    r"\bmientras\b"),
     ('NUMBER', r"\b\d+\b"),
     ('ID', r"\b[A-Za-z_]\w*\b"),
     ('PLUS', r"\+"),
@@ -106,6 +111,16 @@ def tokenize(text):
             tokens.append(Token(TT_INT, value, line=line_num, column=column))
         elif kind == 'SHOW':
             tokens.append(Token(TT_SHOW, value, line=line_num, column=column))
+        elif kind == 'IF':
+            tokens.append(Token(TT_IF, value, line=line_num, column=column))
+        elif kind == 'ELSE':
+            tokens.append(Token(TT_ELSE, value, line=line_num, column=column))
+        elif kind == 'ENDIF':
+            tokens.append(Token(TT_ENDIF, value, line=line_num, column=column))
+        elif kind == 'WHILE':
+            tokens.append(Token(TT_WHILE, value, line=line_num, column=column))
+        elif kind == 'ENDWHILE':
+            tokens.append(Token(TT_ENDWHILE, value, line=line_num, column=column))
         else:
             # Si alguna categoría se añade y no se maneja arriba
             raise LexerError(f"Token desconocido {value!r} en línea {line_num}")

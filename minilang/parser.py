@@ -52,6 +52,21 @@ class Compare:
         self.right = right
 
 
+class IfStmt:
+    def __init__(self, condition, then_body, else_body, line):
+        self.condition = condition
+        self.then_body = then_body   # lista de sentencias
+        self.else_body = else_body   # lista de sentencias (puede ser vacía)
+        self.line = line
+
+
+class WhileStmt:
+    def __init__(self, condition, body, line):
+        self.condition = condition
+        self.body = body   # lista de sentencias
+        self.line = line
+
+
 class Number:
     def __init__(self, value):
         self.value = value
@@ -122,8 +137,48 @@ class Parser:
             self.eat(TT_EQ)
             expr = self.parse_expr()
             return Assign(idtok.value, expr, idtok.line)
+        elif tok.type == TT_IF:
+            return self.parse_if(tok.line)
+        elif tok.type == TT_WHILE:
+            return self.parse_while(tok.line)
         else:
             raise ParseError(f"Sentencia inesperada: {tok.type} (línea {tok.line})")
+
+    def _parse_body(self, *stop_tokens):
+        """Parsea sentencias hasta encontrar alguno de los tokens de parada."""
+        body = []
+        while self.current().type not in stop_tokens and self.current().type != TT_EOF:
+            self.skip_newlines()
+            if self.current().type in stop_tokens or self.current().type == TT_EOF:
+                break
+            body.append(self.parse_statement())
+            self.skip_newlines()
+        return body
+
+    def parse_if(self, line):
+        self.eat(TT_IF)
+        condition = self.parse_expr()
+        self.skip_newlines()
+        then_body = self._parse_body(TT_ELSE, TT_ENDIF)
+        else_body = []
+        if self.current().type == TT_ELSE:
+            self.eat(TT_ELSE)
+            self.skip_newlines()
+            else_body = self._parse_body(TT_ENDIF)
+        if self.current().type != TT_ENDIF:
+            raise ParseError(f"Falta 'fin_si' para cerrar el 'si' de línea {line}")
+        self.eat(TT_ENDIF)
+        return IfStmt(condition, then_body, else_body, line)
+
+    def parse_while(self, line):
+        self.eat(TT_WHILE)
+        condition = self.parse_expr()
+        self.skip_newlines()
+        body = self._parse_body(TT_ENDWHILE)
+        if self.current().type != TT_ENDWHILE:
+            raise ParseError(f"Falta 'fin_mientras' para cerrar el 'mientras' de línea {line}")
+        self.eat(TT_ENDWHILE)
+        return WhileStmt(condition, body, line)
 
     _CMP_OPS = (TT_EQEQ, TT_NEQ, TT_LT, TT_GT, TT_LTE, TT_GTE)
 

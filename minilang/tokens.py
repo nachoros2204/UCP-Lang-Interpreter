@@ -34,6 +34,13 @@ TT_GT    = 'GT'         # >
 TT_LTE   = 'LTE'        # <=
 TT_GTE   = 'GTE'        # >=
 
+# Estructuras de control
+TT_IF       = 'IF'        # si
+TT_ELSE     = 'ELSE'      # sino
+TT_ENDIF    = 'ENDIF'     # fin_si
+TT_WHILE    = 'WHILE'     # mientras
+TT_ENDWHILE = 'ENDWHILE'  # fin_mientras
+
 
 @dataclass
 class Token:
