@@ -16,16 +16,27 @@ TOKEN_SPECIFICATION = [
     ('NEWLINE', r"\n"),
     ('SKIP', r"[ \t]+"),
     ('COMMENT', r"#.*"),
-    ('START', r"\binicio\b"),
-    ('END', r"\bfin\b"),
-    ('INT', r"\bentero\b"),
-    ('SHOW', r"\bmostrar\b"),
+    ('START',    r"\binicio\b"),
+    ('ENDIF',    r"\bfin_si\b"),
+    ('ENDWHILE', r"\bfin_mientras\b"),
+    ('END',      r"\bfin\b"),
+    ('INT',      r"\bentero\b"),
+    ('SHOW',     r"\bmostrar\b"),
+    ('IF',       r"\bsi\b"),
+    ('ELSE',     r"\bsino\b"),
+    ('WHILE',    r"\bmientras\b"),
     ('NUMBER', r"\b\d+\b"),
     ('ID', r"\b[A-Za-z_]\w*\b"),
     ('PLUS', r"\+"),
     ('MINUS', r"-"),
     ('MUL', r"\*"),
     ('DIV', r"/"),
+    ('EQEQ', r"=="),
+    ('NEQ',  r"!="),
+    ('LTE',  r"<="),
+    ('GTE',  r">="),
+    ('LT',   r"<"),
+    ('GT',   r">"),
     ('EQ', r"="),
     ('LPAREN', r"\("),
     ('RPAREN', r"\)"),
@@ -74,6 +85,18 @@ def tokenize(text):
             tokens.append(Token(TT_MUL, value, line=line_num, column=column))
         elif kind == 'DIV':
             tokens.append(Token(TT_DIV, value, line=line_num, column=column))
+        elif kind == 'EQEQ':
+            tokens.append(Token(TT_EQEQ, value, line=line_num, column=column))
+        elif kind == 'NEQ':
+            tokens.append(Token(TT_NEQ, value, line=line_num, column=column))
+        elif kind == 'LT':
+            tokens.append(Token(TT_LT, value, line=line_num, column=column))
+        elif kind == 'GT':
+            tokens.append(Token(TT_GT, value, line=line_num, column=column))
+        elif kind == 'LTE':
+            tokens.append(Token(TT_LTE, value, line=line_num, column=column))
+        elif kind == 'GTE':
+            tokens.append(Token(TT_GTE, value, line=line_num, column=column))
         elif kind == 'EQ':
             tokens.append(Token(TT_EQ, value, line=line_num, column=column))
         elif kind == 'LPAREN':
@@ -88,6 +111,16 @@ def tokenize(text):
             tokens.append(Token(TT_INT, value, line=line_num, column=column))
         elif kind == 'SHOW':
             tokens.append(Token(TT_SHOW, value, line=line_num, column=column))
+        elif kind == 'IF':
+            tokens.append(Token(TT_IF, value, line=line_num, column=column))
+        elif kind == 'ELSE':
+            tokens.append(Token(TT_ELSE, value, line=line_num, column=column))
+        elif kind == 'ENDIF':
+            tokens.append(Token(TT_ENDIF, value, line=line_num, column=column))
+        elif kind == 'WHILE':
+            tokens.append(Token(TT_WHILE, value, line=line_num, column=column))
+        elif kind == 'ENDWHILE':
+            tokens.append(Token(TT_ENDWHILE, value, line=line_num, column=column))
         else:
             # Si alguna categoría se añade y no se maneja arriba
             raise LexerError(f"Token desconocido {value!r} en línea {line_num}")

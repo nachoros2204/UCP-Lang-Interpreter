@@ -6,6 +6,7 @@ Este archivo se mantiene deliberadamente simple para uso académico.
 """
 
 from dataclasses import dataclass
+from typing import Any
 
 
 # Tipos de token usados por el lexer y el parser
@@ -25,12 +26,27 @@ TT_RPAREN = 'RPAREN'    # )
 TT_NEWLINE = 'NEWLINE'  # fin de línea (separador de sentencias)
 TT_EOF = 'EOF'          # fin de archivo
 
+# Operadores de comparación
+TT_EQEQ = 'EQEQ'       # ==
+TT_NEQ   = 'NEQ'        # !=
+TT_LT    = 'LT'         # <
+TT_GT    = 'GT'         # >
+TT_LTE   = 'LTE'        # <=
+TT_GTE   = 'GTE'        # >=
+
+# Estructuras de control
+TT_IF       = 'IF'        # si
+TT_ELSE     = 'ELSE'      # sino
+TT_ENDIF    = 'ENDIF'     # fin_si
+TT_WHILE    = 'WHILE'     # mientras
+TT_ENDWHILE = 'ENDWHILE'  # fin_mientras
+
 
 @dataclass
 class Token:
     type: str
-    value: any = None
-    line: int = 0
+    value: Any = None
+    line: int = 0 
     column: int = 0
 
     def __repr__(self):

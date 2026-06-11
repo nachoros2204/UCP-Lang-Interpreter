@@ -5,7 +5,8 @@ Recibe un AST (desde `parser.py`) y lo ejecuta usando una tabla de símbolos sim
 No traduce a Python: evalúa las expresiones manualmente.
 """
 
-from .parser import *
+from .parser import Program, VarDecl, Assign, Show, BinOp, Number, VarRef, Compare, IfStmt, WhileStmt
+from .tokens import TT_PLUS, TT_MINUS, TT_MUL, TT_DIV, TT_EQEQ, TT_NEQ, TT_LT, TT_GT, TT_LTE, TT_GTE
 
 
 class RuntimeErrorML(Exception):
@@ -40,6 +41,19 @@ class Interpreter:
         elif isinstance(stmt, Show):
             value = self.eval_expr(stmt.expr)
             print(value)
+        elif isinstance(stmt, IfStmt):
+            if self.eval_expr(stmt.condition) != 0:
+                for s in stmt.then_body:
+                    self.exec_statement(s)
+            else:
+                for s in stmt.else_body:
+                    self.exec_statement(s)
+
+        elif isinstance(stmt, WhileStmt):
+            while self.eval_expr(stmt.condition) != 0:
+                for s in stmt.body:
+                    self.exec_statement(s)
+
         else:
             raise RuntimeErrorML(f"Sentencia desconocida: {stmt}")
 
@@ -66,6 +80,18 @@ class Interpreter:
                 return left // right
             else:
                 raise RuntimeErrorML(f"Operador desconocido: {op}")
+        elif isinstance(expr, Compare):
+            left = self.eval_expr(expr.left)
+            right = self.eval_expr(expr.right)
+            ops = {
+                TT_EQEQ: lambda a, b: a == b,
+                TT_NEQ:  lambda a, b: a != b,
+                TT_LT:   lambda a, b: a <  b,
+                TT_GT:   lambda a, b: a >  b,
+                TT_LTE:  lambda a, b: a <= b,
+                TT_GTE:  lambda a, b: a >= b,
+            }
+            return int(ops[expr.op](left, right))
         else:
             raise RuntimeErrorML(f"Expresión no manejada: {expr}")
 
