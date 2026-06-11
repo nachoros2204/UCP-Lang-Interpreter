@@ -2,19 +2,21 @@
 Programa principal para ejecutar MiniLang.
 
 Uso:
-    python -m minilang.main archivo.ml
+    python -m minilang.main archivo.minilang
+    python -m minilang.main archivo.minilang --codigo   (muestra TAC generado)
 
-El flujo es: tokenizar -> parsear -> analizar -> interpretar.
+El flujo es: tokenizar -> parsear -> analizar -> generar código -> interpretar.
 """
 
 import sys
 from .lexer import tokenize, LexerError
 from .parser import parse_tokens, ParseError
 from .semantic_analyzer import analyze, SemanticError
+from .codegen import generate
 from .interpreter import run, RuntimeErrorML
 
 
-def run_file(path):
+def run_file(path, mostrar_codigo=False):
     with open(path, 'r', encoding='utf-8') as f:
         src = f.read()
     try:
@@ -32,6 +34,15 @@ def run_file(path):
     except SemanticError as e:
         print(f"Error semántico: {e}")
         return
+
+    instrucciones = generate(ast)
+
+    if mostrar_codigo:
+        print("=== Código de tres direcciones generado ===")
+        for instr in instrucciones:
+            print(f"  {instr}")
+        print("===========================================")
+
     try:
         run(ast)
     except RuntimeErrorML as e:
@@ -40,6 +51,7 @@ def run_file(path):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Uso: python -m minilang.main ejemplos/archivo.ml")
+        print("Uso: python -m minilang.main ejemplos/archivo.minilang [--codigo]")
         sys.exit(1)
-    run_file(sys.argv[1])
+    mostrar = '--codigo' in sys.argv
+    run_file(sys.argv[1], mostrar_codigo=mostrar)
