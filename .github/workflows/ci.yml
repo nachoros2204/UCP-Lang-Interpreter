@@ -26,6 +26,17 @@ jobs:
       - name: Ejecutar análisis de sintaxis
         run: python -m py_compile minilang/lexer.py minilang/parser.py minilang/interpreter.py minilang/main.py minilang/tokens.py
 
+      - name: Instalar dependencias
+        run: python -m pip install -r requirements.txt
+
+      - name: Ejecutar pruebas unitarias
+        run: |
+          if [ -d "minilang/tests" ]; then
+            python -m pytest minilang/tests -q
+          else
+            echo "No se encontraron pruebas unitarias, se omite pytest."
+          fi
+
       - name: Ejecutar programa de prueba (válido)
         run: python -m minilang.main minilang/ejemplos/valid.minilang
 
