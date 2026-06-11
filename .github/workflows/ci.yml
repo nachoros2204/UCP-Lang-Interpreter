@@ -1,0 +1,36 @@
+name: MiniLang CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verificar versión
+        run: python --version
+
+      - name: Ejecutar análisis de sintaxis
+        run: python -m py_compile minilang/lexer.py minilang/parser.py minilang/interpreter.py minilang/main.py minilang/tokens.py
+
+      - name: Ejecutar programa de prueba (válido)
+        run: python -m minilang.main minilang/ejemplos/valid.minilang
+
+      - name: Ejecutar programa de prueba (error sintáctico)
+        run: python -m minilang.main minilang/ejemplos/invalid_syntax.minilang || true
+
+      - name: Ejecutar programa de prueba (error léxico)
+        run: python -m minilang.main minilang/ejemplos/invalid_lex.minilang || true
