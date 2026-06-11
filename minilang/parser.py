@@ -45,6 +45,13 @@ class BinOp:
         self.right = right
 
 
+class Compare:
+    def __init__(self, left, op, right):
+        self.left = left
+        self.op = op   # TT_EQEQ, TT_NEQ, TT_LT, TT_GT, TT_LTE, TT_GTE
+        self.right = right
+
+
 class Number:
     def __init__(self, value):
         self.value = value
@@ -118,17 +125,25 @@ class Parser:
         else:
             raise ParseError(f"Sentencia inesperada: {tok.type} (línea {tok.line})")
 
-    # Expresiones con precedencia: term ((+|-) term)*
+    _CMP_OPS = (TT_EQEQ, TT_NEQ, TT_LT, TT_GT, TT_LTE, TT_GTE)
+
+    # Punto de entrada de expresiones: comparación tiene menor precedencia
     def parse_expr(self):
+        node = self.parse_arithmetic()
+        if self.current().type in self._CMP_OPS:
+            op = self.current().type
+            self.pos += 1
+            right = self.parse_arithmetic()
+            return Compare(node, op, right)
+        return node
+
+    def parse_arithmetic(self):
         node = self.parse_term()
         while self.current().type in (TT_PLUS, TT_MINUS):
-            op = self.current()
-            if op.type == TT_PLUS:
-                self.eat(TT_PLUS)
-            else:
-                self.eat(TT_MINUS)
+            op_type = self.current().type
+            self.pos += 1
             right = self.parse_term()
-            node = BinOp(node, op.type, right)
+            node = BinOp(node, op_type, right)
         return node
 
     def parse_term(self):

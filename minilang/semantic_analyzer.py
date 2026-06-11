@@ -10,7 +10,7 @@ que el parser no puede encontrar por ser análisis de contexto:
 Lanza `SemanticError` al encontrar el primer error.
 """
 
-from .parser import Program, VarDecl, Assign, Show, BinOp, Number, VarRef
+from .parser import Program, VarDecl, Assign, Show, BinOp, Number, VarRef, Compare
 from .tokens import TT_DIV
 
 
@@ -61,6 +61,10 @@ class SemanticAnalyzer:
             self._check_expr(expr.right, line)
             if expr.op == TT_DIV and isinstance(expr.right, Number) and expr.right.value == 0:
                 raise SemanticError(f"División por cero detectada (línea {line})")
+
+        elif isinstance(expr, Compare):
+            self._check_expr(expr.left, line)
+            self._check_expr(expr.right, line)
 
 
 def analyze(program_ast):

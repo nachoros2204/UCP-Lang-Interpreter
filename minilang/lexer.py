@@ -26,6 +26,12 @@ TOKEN_SPECIFICATION = [
     ('MINUS', r"-"),
     ('MUL', r"\*"),
     ('DIV', r"/"),
+    ('EQEQ', r"=="),
+    ('NEQ',  r"!="),
+    ('LTE',  r"<="),
+    ('GTE',  r">="),
+    ('LT',   r"<"),
+    ('GT',   r">"),
     ('EQ', r"="),
     ('LPAREN', r"\("),
     ('RPAREN', r"\)"),
@@ -74,6 +80,18 @@ def tokenize(text):
             tokens.append(Token(TT_MUL, value, line=line_num, column=column))
         elif kind == 'DIV':
             tokens.append(Token(TT_DIV, value, line=line_num, column=column))
+        elif kind == 'EQEQ':
+            tokens.append(Token(TT_EQEQ, value, line=line_num, column=column))
+        elif kind == 'NEQ':
+            tokens.append(Token(TT_NEQ, value, line=line_num, column=column))
+        elif kind == 'LT':
+            tokens.append(Token(TT_LT, value, line=line_num, column=column))
+        elif kind == 'GT':
+            tokens.append(Token(TT_GT, value, line=line_num, column=column))
+        elif kind == 'LTE':
+            tokens.append(Token(TT_LTE, value, line=line_num, column=column))
+        elif kind == 'GTE':
+            tokens.append(Token(TT_GTE, value, line=line_num, column=column))
         elif kind == 'EQ':
             tokens.append(Token(TT_EQ, value, line=line_num, column=column))
         elif kind == 'LPAREN':
