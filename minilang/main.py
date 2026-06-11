@@ -4,12 +4,13 @@ Programa principal para ejecutar MiniLang.
 Uso:
     python -m minilang.main archivo.ml
 
-El flujo es: tokenizar -> parsear -> interpretar.
+El flujo es: tokenizar -> parsear -> analizar -> interpretar.
 """
 
 import sys
 from .lexer import tokenize, LexerError
 from .parser import parse_tokens, ParseError
+from .semantic_analyzer import analyze, SemanticError
 from .interpreter import run, RuntimeErrorML
 
 
@@ -25,6 +26,11 @@ def run_file(path):
         ast = parse_tokens(tokens)
     except ParseError as e:
         print(f"Error sintáctico: {e}")
+        return
+    try:
+        analyze(ast)
+    except SemanticError as e:
+        print(f"Error semántico: {e}")
         return
     try:
         run(ast)
