@@ -6,6 +6,7 @@ Este archivo se mantiene deliberadamente simple para uso académico.
 """
 
 from dataclasses import dataclass
+from typing import Any
 
 
 # Tipos de token usados por el lexer y el parser
@@ -29,8 +30,8 @@ TT_EOF = 'EOF'          # fin de archivo
 @dataclass
 class Token:
     type: str
-    value: any = None
-    line: int = 0
+    value: Any = None
+    line: int = 0 
     column: int = 0
 
     def __repr__(self):
